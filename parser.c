@@ -16,7 +16,7 @@ int main()
 	char* rch;
 	char str[200];
 	char LineInFile[40][300];
-	int lineP, lineQ, wordQ;
+	int lineP, lineQ;
 	char* sch;
 	char tokenizedLine[10][10];
 	char processID[10][10];
@@ -47,13 +47,17 @@ int main()
 		
 		token = strtok(str, " ");
 		size_t j = 0;
-		while (token != NULL) {
-		//while (str[j] != '\0') {
-			printf("%s", token);
+		//while (token != NULL) {
+		while (str[j] != '\0') {
+			j++;
 			
-			strcpy(processID[0], token);
-			//fprintf("%s ", processID[0]);
-			token = strtok(NULL, " ");
+			for (int i = 0; i < j - 1; i+2) {
+				strcpy(processID[i], token);
+				//fprintf(fp2, "%s ", processID[i]);
+				printf("%s", token);
+			}
+			
+			//token = strtok(NULL, " ");
 		}
 	}
 
@@ -97,6 +101,7 @@ int main()
 			//tokenizedLine has the event separated by spaces (e.g. Time slice for P7 expires)
 			if (strcmp(tokenizedLine[1], "requests") == 0)						//Process requests an I/O device
 			{
+				//printf("%s \n", tokenizedLine[1]);
 				//fprintf(fp2, "%s %s ", tokenizedLine[0], tokenizedLine[1]);
 				fprintf(fp2, "%s %s %s ", tokenizedLine[0], tokenizedLine[1], tokenizedLine[3]);
 				
