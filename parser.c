@@ -19,7 +19,7 @@ int main()
 	int lineP, lineQ, wordQ;
 	char* sch;
 	char tokenizedLine[10][10];
-	char processID[19];
+	char processID[10][10];
 	char* token;
 
 
@@ -37,6 +37,7 @@ int main()
 	//copy first line of the original file to the new filefile
 	if (fgets(str, sizeof(str), fp1) != NULL)
 	{
+		//Removing the 'end'
 		//const char character[2] = " ";
 		char character = ' ';
 		char* ptr = strrchr(str, character);
@@ -44,14 +45,16 @@ int main()
 		//printf("%s", str);
 		fprintf(fp2, "%s\n", str);
 		
-		const char s[2] = " ";
-		token = strtok(str, s);
+		token = strtok(str, " ");
+		size_t j = 0;
 		while (token != NULL) {
+		//while (str[j] != '\0') {
 			printf("%s", token);
-
-			token = strtok(NULL, s);
+			
+			strcpy(processID[0], token);
+			//fprintf("%s ", processID[0]);
+			token = strtok(NULL, " ");
 		}
-		
 	}
 
 		
@@ -84,8 +87,9 @@ int main()
 			{
 				strcpy(tokenizedLine[lineQ], sch);		//use strtok to break up each line into separate words and put the words in the array of strings
 				lineQ++;								//count number of valid elements
+				//printf("%d", lineQ);
 				sch = strtok(NULL, " ");
-				printf("%s", tokenizedLine[lineQ]);
+				//printf("%s", tokenizedLine[lineQ]);
 			}
 			
 			
