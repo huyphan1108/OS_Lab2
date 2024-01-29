@@ -1,0 +1,4 @@
+﻿  parser.c
+C:\Users\phanh4\OneDrive - Wentworth Institute of Technology\Desktop\OperatingSystem\Lab2\parser.c(19,20): warning C4101: 'wordQ': unreferenced local variable
+C:\Users\phanh4\OneDrive - Wentworth Institute of Technology\Desktop\OperatingSystem\Lab2\parser.c(22,7): warning C4101: 'processID': unreferenced local variable
+  Lab2.vcxproj -> C:\Users\phanh4\OneDrive - Wentworth Institute of Technology\Desktop\OperatingSystem\Lab2\x64\Debug\Lab2.exe
