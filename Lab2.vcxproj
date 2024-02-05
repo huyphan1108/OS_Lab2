@@ -129,6 +129,7 @@
   <ItemGroup>
     <Text Include="inp1.txt" />
     <Text Include="inp1_parsed.txt" />
+    <Text Include="text.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="parser.c" />
