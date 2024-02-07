@@ -7,7 +7,6 @@
 typedef struct {
 	char id[20];
 	char state[20];
-	char queue[20];
 } Process;
 
 
@@ -28,7 +27,6 @@ int main()
 	//You can store in variables instead of printing to file
 	//int first = 0;
 	Process processes[19];
-	int temp_i[3];
 	int temp_count = 0;
 
 	char* printer_q = (char*)malloc(10 * sizeof(char));
@@ -62,15 +60,14 @@ int main()
 		else {
 			strcpy(processes[j / 2].state, token);
 		}
-		strcpy(processes[j / 2].queue, "");
 		token = strtok(NULL, " ");
 		j++;
 	}
 
 	//printf("%d ", j / 2);
 	/*
-	for (int j = 0; j < i / 2; j++) {
-		fprintf(fp2, "Process %d: id = %s, state = %s\n", j, processes[j].id, processes[j].state);
+	for (int z = 0; z < j / 2; z++) {
+		fprintf(fp2, "Process %d: id = %s, state = %s\n", j, processes[z].id, processes[z].state);
 	}
 	*/
 	lineP = 0;
@@ -110,7 +107,6 @@ int main()
 			fprintf(fp2, "%s\n", processes[0].state);
 			}*/
 			
-			
 			//tokenizedLine has the event separated by spaces (e.g. Time slice for P7 expires)
 			if (strcmp(tokenizedLine[1], "requests") == 0)						//Process requests an I/O device
 			{
@@ -122,7 +118,37 @@ int main()
 						//fprintf(fp2, "%s ", processes[a].state);
 					}
 				}
-				//temp_count++;
+				if (strcmp(tokenizedLine[3], "disk") == 0) {
+					if (strcmp(disk_q, "") == 0) {
+						strcpy(disk_q, tokenizedLine[0]);
+						
+					}
+					else {
+						strcat(disk_q, " ");
+						strcat(disk_q, tokenizedLine[0]);
+					}
+				}
+				if (strcmp(tokenizedLine[3], "printer") == 0) {
+					if (strcmp(printer_q, "") == 0) {
+						strcpy(printer_q, tokenizedLine[0]);
+
+					}
+					else {
+						strcat(printer_q, " ");
+						strcat(printer_q, tokenizedLine[0]);
+					}
+				}
+				if (strcmp(tokenizedLine[3], "keyboard") == 0) {
+					if (strcmp(kb_q, "") == 0) {
+						strcpy(kb_q, tokenizedLine[0]);
+
+					}
+					else {
+						strcat(kb_q, " ");
+						strcat(kb_q, tokenizedLine[0]);
+					}
+				}
+				//printf("%s\n", disk_q);
 			}
 			else if (strcmp(tokenizedLine[2], "dispatched") == 0) {
 				for (int a = 0; a < n; a++) {
@@ -148,6 +174,18 @@ int main()
 					}
 				}
 			}
+			else if (strcmp(tokenizedLine[3], "in") == 0) {
+				for (int a = 0; a < n; a++) {
+					if (strcmp(tokenizedLine[0], processes[a].id) == 0) {
+						if (strcmp(processes[a].state, "Blocked/Suspend") == 0) {
+							strcpy(processes[a].state, "Blocked*");
+						}
+						else if (strcmp(processes[a].state, "Ready/Suspend") == 0) {
+							strcpy(processes[a].state, "Ready*");
+						}
+					}
+				}
+			}
 			else if (strcmp(tokenizedLine[2], "terminated") == 0) {
 				for (int a = 0; a < n; a++) {
 					if (strcmp(tokenizedLine[0], processes[a].id) == 0) {
@@ -155,14 +193,27 @@ int main()
 					}
 				}
 			}
+			/// TODO: Interrupt
+			else if (strcmp(tokenizedLine[1], "interrupt") == 0) {
+
+			}
 		}
+		//print
 		for (int a = 0; a < n; a++) {
 			fprintf(fp2, "%s %s ", processes[a].id, processes[a].state);
 		}
-
+		//Run through process state array to remove the '*'
+		for (int a = 0; a < n; a++) {
+			size_t temp_size = strlen(processes[a].state);
+			if (processes[a].state[temp_size - 1] == '*') {
+				processes[a].state[temp_size - 1] = '\0';
+			}
+		}
+		fprintf(fp2, "\nDisk queue: %s\n", disk_q);
+		fprintf(fp2, "Printer queue: %s\n", printer_q);
+		fprintf(fp2, "Keyboard queue: %s\n", kb_q);
 		fprintf(fp2, "\n");
 	}
-
 
 	printf("Parsing complete\n\n");
 	fclose(fp1);
