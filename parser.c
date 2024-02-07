@@ -25,9 +25,8 @@ int main()
 	fp1 = fopen("inp1.txt", "r");			//open the original input file
 	fp2 = fopen("inp1_parsed.txt", "w");	//output the Process ID and event to another file. 
 	//You can store in variables instead of printing to file
-	//int first = 0;
+	
 	Process processes[19];
-	int temp_count = 0;
 
 	char* printer_q = (char*)malloc(10 * sizeof(char));
 	char* disk_q = (char*)malloc(10 * sizeof(char));
