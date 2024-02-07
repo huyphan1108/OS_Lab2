@@ -160,7 +160,7 @@ int main()
 			fprintf(fp2, "%s %s ", processes[a].id, processes[a].state);
 		}
 
-		fprintf(fp2, "\n");
+		fprintf(fp2, "\n\n");
 	}
 
 
