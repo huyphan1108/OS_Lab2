@@ -194,17 +194,22 @@ int main()
 			}
 			/// TODO: Interrupt
 			else if (strcmp(tokenizedLine[1], "interrupt") == 0) {
-
+				for (int a = 0; a < n; a++) {
+					if (strcmp(tokenizedLine[4], processes[a].id) == 0) {
+						if (strcmp(processes[a].state, "Blocked") == 0) {
+							strcpy(processes[a].state, "Ready*");
+						}
+						else if (strcmp(processes[a].state, "Blocked/Suspend") == 0) {
+							strcpy(processes[a].state, "Ready/Suspend*");
+						}
+					}
+				}
 			}
 		}
 		//print
 		for (int a = 0; a < n; a++) {
 			fprintf(fp2, "%s %s ", processes[a].id, processes[a].state);
 		}
-<<<<<<< HEAD
-
-		fprintf(fp2, "\n\n");
-=======
 		//Run through process state array to remove the '*'
 		for (int a = 0; a < n; a++) {
 			size_t temp_size = strlen(processes[a].state);
@@ -216,7 +221,6 @@ int main()
 		fprintf(fp2, "Printer queue: %s\n", printer_q);
 		fprintf(fp2, "Keyboard queue: %s\n", kb_q);
 		fprintf(fp2, "\n");
->>>>>>> bab48c82ef4c69b4ac8678439761526e46b5bfc0
 	}
 
 	printf("Parsing complete\n\n");

@@ -1,7 +1,2 @@
 ﻿  parser.c
-<<<<<<< HEAD
-C:\Users\phanh4\OneDrive - Wentworth Institute of Technology\Desktop\OperatingSystem\OS_Lab2\parser.c(31,6): warning C4101: 'temp_i': unreferenced local variable
   Lab2.vcxproj -> C:\Users\phanh4\OneDrive - Wentworth Institute of Technology\Desktop\OperatingSystem\OS_Lab2\x64\Debug\Lab2.exe
-=======
-  Lab2.vcxproj -> C:\Users\huyph\OneDrive\Desktop\Operating System\OS_Lab2\x64\Debug\Lab2.exe
->>>>>>> bab48c82ef4c69b4ac8678439761526e46b5bfc0
