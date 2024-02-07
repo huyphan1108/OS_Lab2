@@ -7,6 +7,7 @@
 typedef struct {
 	char id[20];
 	char state[20];
+	char queue[18];
 } Process;
 
 
@@ -64,6 +65,9 @@ int main()
 	}
 
 	//printf("%d ", j / 2);
+	for (int a = 0; a < j / 2; a++) {
+		strcpy(processes[a].queue, "");
+	}
 	/*
 	for (int z = 0; z < j / 2; z++) {
 		fprintf(fp2, "Process %d: id = %s, state = %s\n", j, processes[z].id, processes[z].state);
