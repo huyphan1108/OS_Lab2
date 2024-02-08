@@ -7,9 +7,21 @@
 typedef struct {
 	char id[20];
 	char state[20];
-	char queue[18];
+	char queue[20];
 } Process;
 
+void parse_queue(char* pid, char* queue) {
+	printf("%s\n", pid);
+	printf("%s\n", queue);
+	char* d_token = strtok(queue, " ");
+	for (int a = 0; d_token != NULL; a++) {
+		//printf("%s ", d_token);
+		if (strcmp(d_token, pid) == 0) {
+			d_token = '\0';
+		}
+		d_token = strtok(NULL, " ");
+	}
+}
 
 int main()
 {
@@ -116,42 +128,44 @@ int main()
 				//fprintf(fp2, "%s %s \n", tokenizedLine[0], tokenizedLine[1]);
 				//fprintf(fp2, "%s %s %s ", tokenizedLine[0], tokenizedLine[1], tokenizedLine[3]);
 				for (int a = 0; a < n; a++) {
-					if (strcmp(tokenizedLine[0], processes[a].id) == 0) {
+					if ((strcmp(tokenizedLine[0], processes[a].id) == 0) && (strcmp(tokenizedLine[3], "disk") == 0)) {
 						strcpy(processes[a].state, "Blocked*");
+						strcpy(processes[a].queue, "disk");
+						if (strcmp(disk_q, "") == 0) {
+							strcpy(disk_q, tokenizedLine[0]);
+						}
+						else {
+							strcat(disk_q, " ");
+							strcat(disk_q, tokenizedLine[0]);
+						}
 						//fprintf(fp2, "%s ", processes[a].state);
 					}
-				}
-				if (strcmp(tokenizedLine[3], "disk") == 0) {
-					if (strcmp(disk_q, "") == 0) {
-						strcpy(disk_q, tokenizedLine[0]);
-						
-					}
-					else {
-						strcat(disk_q, " ");
-						strcat(disk_q, tokenizedLine[0]);
-					}
-				}
-				if (strcmp(tokenizedLine[3], "printer") == 0) {
-					if (strcmp(printer_q, "") == 0) {
-						strcpy(printer_q, tokenizedLine[0]);
+					else if ((strcmp(tokenizedLine[0], processes[a].id) == 0) && (strcmp(tokenizedLine[3], "printer") == 0)) {
+						strcpy(processes[a].state, "Blocked*");
+						strcpy(processes[a].queue, "printer");
+						if (strcmp(printer_q, "") == 0) {
+							strcpy(printer_q, tokenizedLine[0]);
 
+						}
+						else {
+							strcat(printer_q, " ");
+							strcat(printer_q, tokenizedLine[0]);
+						}
 					}
-					else {
-						strcat(printer_q, " ");
-						strcat(printer_q, tokenizedLine[0]);
-					}
-				}
-				if (strcmp(tokenizedLine[3], "keyboard") == 0) {
-					if (strcmp(kb_q, "") == 0) {
-						strcpy(kb_q, tokenizedLine[0]);
+					else if ((strcmp(tokenizedLine[0], processes[a].id) == 0) && (strcmp(tokenizedLine[3], "keyboard") == 0)) {
+						strcpy(processes[a].state, "Blocked*");
+						strcpy(processes[a].queue, "keyboard");
+						if (strcmp(kb_q, "") == 0) {
+							strcpy(kb_q, tokenizedLine[0]);
 
+						}
+						else {
+							strcat(kb_q, " ");
+							strcat(kb_q, tokenizedLine[0]);
+						}
 					}
-					else {
-						strcat(kb_q, " ");
-						strcat(kb_q, tokenizedLine[0]);
-					}
+
 				}
-				//printf("%s\n", disk_q);
 			}
 			else if (strcmp(tokenizedLine[2], "dispatched") == 0) {
 				for (int a = 0; a < n; a++) {
@@ -160,20 +174,22 @@ int main()
 					}
 				}
 				if (strcmp(tokenizedLine[3], "disk") == 0) {
-					
+
+				}
+			}
+			else if (strcmp(tokenizedLine[3], "out") == 0) {
+				//printf("%s", tokenizedLine[3]);
+				for (int a = 0; a < n; a++) {
+					if (strcmp(tokenizedLine[0], processes[a].id) == 0) {
+						strcat(processes[a].state, "/Suspend*");
+						//printf("%s \n", processes[a].state);
+					}
 				}
 			}
 			else if (strcmp(tokenizedLine[4], "expires") == 0) {
 				for (int a = 0; a < n; a++) {
 					if (strcmp(tokenizedLine[3], processes[a].id) == 0) {
 						strcpy(processes[a].state, "Ready*");
-					}
-				}
-			}
-			else if (strcmp(tokenizedLine[3], "out") == 0) {
-				for (int a = 0; a < n; a++) {
-					if (strcmp(tokenizedLine[0], processes[a].id) == 0) {
-						strcat(processes[a].state, "/Suspend*");
 					}
 				}
 			}
@@ -202,14 +218,37 @@ int main()
 					if (strcmp(tokenizedLine[4], processes[a].id) == 0) {
 						if (strcmp(processes[a].state, "Blocked") == 0) {
 							strcpy(processes[a].state, "Ready*");
+							//printf("%s\n", processes[a].queue);
+							if (strcmp(processes[a].queue, "disk") == 0) {
+								parse_queue(processes[a].id, disk_q);
+							}
+							else if (strcmp(processes[a].queue, "printer") == 0) {
+								parse_queue(processes[a].id, printer_q);
+							}
+							else if (strcmp(processes[a].queue, "keyboard") == 0) {
+								parse_queue(processes[a].id, kb_q);
+							}
 						}
 						else if (strcmp(processes[a].state, "Blocked/Suspend") == 0) {
 							strcpy(processes[a].state, "Ready/Suspend*");
+							if (strcmp(processes[a].queue, "disk") == 0) {
+								parse_queue(processes[a].id, disk_q);
+							}
+							else if (strcmp(processes[a].queue, "printer") == 0) {
+								parse_queue(processes[a].id, printer_q);
+							}
+							else if (strcmp(processes[a].queue, "keyboard") == 0) {
+								parse_queue(processes[a].id, kb_q);
+							}
 						}
+						//parse_queue(tokenizedLine[4], disk_q);
 					}
+					
 				}
 			}
+			
 		}
+		
 		//print
 		for (int a = 0; a < n; a++) {
 			fprintf(fp2, "%s %s ", processes[a].id, processes[a].state);
@@ -227,6 +266,7 @@ int main()
 		fprintf(fp2, "\n");
 	}
 
+	//parse_queue(disk_q);
 	printf("Parsing complete\n\n");
 	fclose(fp1);
 	fclose(fp2);
