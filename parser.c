@@ -1,8 +1,8 @@
-//parses the input file into Process and event
 #define _CRT_SECURE_NO_DEPRECATE
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+//#include <sys/time.h>
 
 typedef struct {
 	char id[20];
@@ -10,18 +10,21 @@ typedef struct {
 	char queue[20];
 } Process;
 
-void parse_queue(char* pid, char* queue) {
-	printf("%s\n", pid);
-	printf("%s\n", queue);
+//Derek
+char temp_arr[20][5];
+void parse_queue(char* queue) {
+	//printf("%s\n", pid);
+	//printf("%s\n", queue);
 	char* d_token = strtok(queue, " ");
+
 	for (int a = 0; d_token != NULL; a++) {
 		//printf("%s ", d_token);
-		if (strcmp(d_token, pid) == 0) {
-			d_token = '\0';
-		}
+		strcpy(temp_arr[a], d_token);
 		d_token = strtok(NULL, " ");
 	}
 }
+
+
 
 int main()
 {
@@ -32,13 +35,16 @@ int main()
 	int lineP, lineQ;
 	char* sch;
 	char tokenizedLine[10][10];
+	int blocked_count = 0;
+	int user_inp;
+	int user_process;
 
 	FILE* fp1;
 	FILE* fp2;
 	fp1 = fopen("inp1.txt", "r");			//open the original input file
 	fp2 = fopen("inp1_parsed.txt", "w");	//output the Process ID and event to another file. 
 	//You can store in variables instead of printing to file
-	
+
 	Process processes[19];
 
 	char* printer_q = (char*)malloc(10 * sizeof(char));
@@ -80,17 +86,38 @@ int main()
 	for (int a = 0; a < j / 2; a++) {
 		strcpy(processes[a].queue, "");
 	}
+	
 	/*
 	for (int z = 0; z < j / 2; z++) {
 		fprintf(fp2, "Process %d: id = %s, state = %s\n", j, processes[z].id, processes[z].state);
 	}
 	*/
+	for (int a = 0; a < j / 2; a++) {
+		if (strcmp(processes[a].state, "Blocked") == 0) {
+			blocked_count++;
+		}
+	}
+	//printf("Number of blocked processes is: %d\n", blocked_count);
+	printf("Choose percentage of Processes in Blocked state (80, 90 or 100): ");
+	scanf("%d", &user_inp);
+	//printf("User chose: %d", user_inp);
+	while (user_inp != 80 && user_inp != 90 && user_inp != 100) {
+		printf("Please choose 80, 90 or 100 for percentage value: ");
+		scanf("%d", &user_inp);
+	}
+
+	int n = j / 2; // n is total number of process
+	//printf("Total number of process is: %d\n", n);
+
+	user_process = n * user_inp / 100;
+	printf("Number of user process is: %d\n", user_process);
+	
 	lineP = 0;
 	i = 0;
+	
 
 	while (fgets(str, sizeof(str), fp1) != NULL) {
 		fprintf(fp2, "%s", str);
-		size_t n = j / 2;
 		lineP = 0;
 		rch = strtok(str, ":;.");					// use strtok to break up the line by : or . or ; This would separate each line into the different events
 		while (rch != NULL)
@@ -109,11 +136,11 @@ int main()
 				lineQ++;								//count number of valid elements
 				sch = strtok(NULL, " ");
 			}
-			
+
 			/* //Test
 			fprintf(fp2, "%s ", processes[1].id);
 			fprintf(fp2, "%s ", tokenizedLine[0]);
-			
+
 			for (int a = 0; a < n; a++) {
 				if (strcmp(tokenizedLine[0], processes[a].id) == 0) {
 					printf("True\n");
@@ -121,7 +148,7 @@ int main()
 			strcat(processes[0].state, "/Suspend*");
 			fprintf(fp2, "%s\n", processes[0].state);
 			}*/
-			
+
 			//tokenizedLine has the event separated by spaces (e.g. Time slice for P7 expires)
 			if (strcmp(tokenizedLine[1], "requests") == 0)						//Process requests an I/O device
 			{
@@ -164,8 +191,9 @@ int main()
 							strcat(kb_q, tokenizedLine[0]);
 						}
 					}
-
 				}
+				blocked_count++;
+				printf("Number of blocked processes is: %d\n", blocked_count);
 			}
 			else if (strcmp(tokenizedLine[2], "dispatched") == 0) {
 				for (int a = 0; a < n; a++) {
@@ -177,6 +205,7 @@ int main()
 
 				}
 			}
+			/*
 			else if (strcmp(tokenizedLine[3], "out") == 0) {
 				//printf("%s", tokenizedLine[3]);
 				for (int a = 0; a < n; a++) {
@@ -186,6 +215,7 @@ int main()
 					}
 				}
 			}
+			*/
 			else if (strcmp(tokenizedLine[4], "expires") == 0) {
 				for (int a = 0; a < n; a++) {
 					if (strcmp(tokenizedLine[3], processes[a].id) == 0) {
@@ -193,6 +223,7 @@ int main()
 					}
 				}
 			}
+			/*
 			else if (strcmp(tokenizedLine[3], "in") == 0) {
 				for (int a = 0; a < n; a++) {
 					if (strcmp(tokenizedLine[0], processes[a].id) == 0) {
@@ -205,6 +236,7 @@ int main()
 					}
 				}
 			}
+			*/
 			else if (strcmp(tokenizedLine[2], "terminated") == 0) {
 				for (int a = 0; a < n; a++) {
 					if (strcmp(tokenizedLine[0], processes[a].id) == 0) {
@@ -220,35 +252,112 @@ int main()
 							strcpy(processes[a].state, "Ready*");
 							//printf("%s\n", processes[a].queue);
 							if (strcmp(processes[a].queue, "disk") == 0) {
-								parse_queue(processes[a].id, disk_q);
+								if (strcmp(processes[a].id, disk_q) == 0) {
+									disk_q[0] = '\0';
+									continue;
+								}
+								int k = 0;
+								parse_queue(disk_q);
+								while (strcmp(temp_arr[k], "") != 0) {
+									if (strcmp(temp_arr[k], processes[a].id) != 0) {
+										size_t temp_size = strlen(disk_q);
+										disk_q[temp_size - 3] = '\0';
+									}
+									k++;
+								}
 							}
 							else if (strcmp(processes[a].queue, "printer") == 0) {
-								parse_queue(processes[a].id, printer_q);
+								if (strcmp(processes[a].id, printer_q) == 0) {
+									printer_q[0] = '\0';
+									continue;
+								}
+								int k = 0;
+								parse_queue(printer_q);
+								while (strcmp(temp_arr[k], "") != 0) {
+									if (strcmp(temp_arr[k], processes[a].id) != 0) {
+										size_t temp_size = strlen(printer_q);
+										printer_q[temp_size - 3] = '\0';
+									}
+									k++;
+								}
 							}
 							else if (strcmp(processes[a].queue, "keyboard") == 0) {
-								parse_queue(processes[a].id, kb_q);
+								//parse_queue(processes[a].id, kb_q);
+								if (strcmp(processes[a].id, kb_q) == 0) {
+									kb_q[0] = '\0';
+									continue;
+								}
+								int k = 0;
+								parse_queue(kb_q);
+								while (strcmp(temp_arr[k], "") != 0) {
+									if (strcmp(temp_arr[k], processes[a].id) != 0) {
+										size_t temp_size = strlen(kb_q);
+										kb_q[temp_size - 3] = '\0';
+									}
+									k++;
+								}
 							}
 						}
 						else if (strcmp(processes[a].state, "Blocked/Suspend") == 0) {
 							strcpy(processes[a].state, "Ready/Suspend*");
 							if (strcmp(processes[a].queue, "disk") == 0) {
-								parse_queue(processes[a].id, disk_q);
+								//parse_queue(processes[a].id, disk_q);
+								if (strcmp(processes[a].id, disk_q) == 0) {
+									disk_q[0] = '\0';
+									continue;
+								}
+								int k = 0;
+								parse_queue(disk_q);
+								while (strcmp(temp_arr[k], "") != 0) {
+									if (strcmp(temp_arr[k], processes[a].id) != 0) {
+										size_t temp_size = strlen(disk_q);
+										disk_q[temp_size - 3] = '\0';
+									}
+									k++;
+								}
 							}
 							else if (strcmp(processes[a].queue, "printer") == 0) {
-								parse_queue(processes[a].id, printer_q);
+								//parse_queue(processes[a].id, printer_q);
+								if (strcmp(processes[a].id, printer_q) == 0) {
+									printer_q[0] = '\0';
+									continue;
+								}
+								int k = 0;
+								parse_queue(printer_q);
+								while (strcmp(temp_arr[k], "") != 0) {
+									if (strcmp(temp_arr[k], processes[a].id) != 0) {
+										size_t temp_size = strlen(printer_q);
+										printer_q[temp_size - 3] = '\0';
+									}
+									k++;
+								}
 							}
 							else if (strcmp(processes[a].queue, "keyboard") == 0) {
-								parse_queue(processes[a].id, kb_q);
+								//parse_queue(processes[a].id, kb_q);
+								if (strcmp(processes[a].id, kb_q) == 0) {
+									kb_q[0] = '\0';
+									continue;
+								}
+								int k = 0;
+								parse_queue(kb_q);
+								while (strcmp(temp_arr[k], "") != 0) {
+									if (strcmp(temp_arr[k], processes[a].id) != 0) {
+										size_t temp_size = strlen(kb_q);
+										kb_q[temp_size - 3] = '\0';
+									}
+									k++;
+								}
 							}
 						}
 						//parse_queue(tokenizedLine[4], disk_q);
 					}
-					
+
 				}
+				blocked_count--;
+				printf("Number of blocked processes is: %d\n", blocked_count);
 			}
-			
 		}
-		
+
 		//print
 		for (int a = 0; a < n; a++) {
 			fprintf(fp2, "%s %s ", processes[a].id, processes[a].state);
@@ -263,6 +372,18 @@ int main()
 		fprintf(fp2, "\nDisk queue: %s\n", disk_q);
 		fprintf(fp2, "Printer queue: %s\n", printer_q);
 		fprintf(fp2, "Keyboard queue: %s\n", kb_q);
+
+		if (blocked_count == user_process) {
+			fprintf(fp2, "\nSome process will be swapped out\n");
+			fprintf(fp2, "List of Blocked: ");
+			for (int a = 0; a < n; a++) {
+				if (strcmp(processes[a].state, "Blocked") == 0) {
+					fprintf(fp2, "%s ", processes[a].id);
+					//printf("%s ", processes[a].id);
+				}
+			}
+			fprintf(fp2, "\n");
+		}
 		fprintf(fp2, "\n");
 	}
 

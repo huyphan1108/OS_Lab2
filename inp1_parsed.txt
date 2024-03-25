@@ -30,44 +30,50 @@ Disk queue: P3 P5
 Printer queue: P7
 Keyboard queue: P8
 
+Some process will be swapped out
+List of Blocked: P3 P5 P7 P8 
+
 At time 28: P7 is swapped out. 
-P1 Running P3 Blocked P5 Blocked P7 Blocked/Suspend* P8 Blocked 
+P1 Running P3 Blocked P5 Blocked P7 Blocked P8 Blocked 
 Disk queue: P3 P5
 Printer queue: P7
 Keyboard queue: P8
 
+Some process will be swapped out
+List of Blocked: P3 P5 P7 P8 
+
 At time 33: An interrupt occurred for P5. 
-P1 Running P3 Blocked P5 Ready* P7 Blocked/Suspend P8 Blocked 
+P1 Running P3 Blocked P5 Ready* P7 Blocked P8 Blocked 
 Disk queue: P3
 Printer queue: P7
 Keyboard queue: P8
 
 At time 36: An interrupt occurred for P3. 
-P1 Running P3 Ready* P5 Ready P7 Blocked/Suspend P8 Blocked 
-Disk queue: P3
+P1 Running P3 Ready* P5 Ready P7 Blocked P8 Blocked 
+Disk queue: 
 Printer queue: P7
 Keyboard queue: P8
 
 At time 38: P1 is terminated. 
-P1 Exit* P3 Ready P5 Ready P7 Blocked/Suspend P8 Blocked 
-Disk queue: P3
+P1 Exit* P3 Ready P5 Ready P7 Blocked P8 Blocked 
+Disk queue: 
 Printer queue: P7
 Keyboard queue: P8
 
 At time 40: An interrupt occurred for P7. 
-P1 Exit P3 Ready P5 Ready P7 Ready/Suspend* P8 Blocked 
-Disk queue: P3
-Printer queue: P7
+P1 Exit P3 Ready P5 Ready P7 Ready* P8 Blocked 
+Disk queue: 
+Printer queue: 
 Keyboard queue: P8
 
 At time 44: P7 is swapped in. 
-P1 Exit P3 Ready P5 Ready P7 Ready* P8 Blocked 
-Disk queue: P3
-Printer queue: P7
+P1 Exit P3 Ready P5 Ready P7 Ready P8 Blocked 
+Disk queue: 
+Printer queue: 
 Keyboard queue: P8
 
 At time 48: An interrupt occurred for P8. P1 Exit P3 Ready P5 Ready P7 Ready P8 Ready* 
-Disk queue: P3
-Printer queue: P7
-Keyboard queue: P8
+Disk queue: 
+Printer queue: 
+Keyboard queue: 
 
